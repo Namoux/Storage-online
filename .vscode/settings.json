@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "toto": "css",
+        "unistd.h": "c",
+        "socket.h": "c"
+    }
+}
