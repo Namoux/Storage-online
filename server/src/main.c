@@ -30,38 +30,39 @@ int main () {
         if (error == - 1) return EXIT_FAILURE;
     printf("Server listen in port: %d\n", SERVER_PORT);
 
-    while (1){
-    /* Attente de la connexion client */
-    struct sockaddr_in client_addr;
-    socklen_t len;
-    printf("En attente de connexion du client...\n");
-    int client_fd = accept(server_fd,(struct sockaddr*)&client_addr,&len); perror("accept ");
-        if(client_fd == -1) {close(server_fd); return EXIT_FAILURE;}
-    
-    /* Client connecté, Envoi de message de bienvenue */
-    char welcome[BUFSIZ]; memset(welcome, 0, BUFSIZ);
-    strcpy(welcome, "Bienvenue dans le ☁️☁️  ZenCloud ☁️☁️\n");
-    int error = send(client_fd, welcome, strlen(welcome), 0); perror("send ");
-        if(error == -1){ close(client_fd); close(server_fd); return EXIT_FAILURE; }
-    printf("%s\n", welcome);
+    while (1) {
+        /* Attente de la connexion client */
+        struct sockaddr_in client_addr;
+        socklen_t len;
+        printf("En attente de connexion du client...\n");
+        int client_fd = accept(server_fd,(struct sockaddr*)&client_addr,&len); perror("accept ");
+            if(client_fd == -1) {close(server_fd); return EXIT_FAILURE;}
+        
+        /* Client connecté, Envoi de message de bienvenue */
+        char welcome[BUFSIZ]; memset(welcome, 0, BUFSIZ);
+        strcpy(welcome, "Bienvenue dans le ☁️☁️  ZenCloud ☁️☁️\n");
+        int error = send(client_fd, welcome, strlen(welcome), 0); perror("send ");
+            if(error == -1){ close(client_fd); close(server_fd); return EXIT_FAILURE; }
+        printf("%s\n", welcome);
 
-    /* Attente du choix du client */
-    char action[BUFSIZ]; memset(action, 0, BUFSIZ);
-    error = recv(client_fd, action, sizeof(action), 0); perror("recv action ");
-        if (error == -1) { close(client_fd); return EXIT_FAILURE; }
-    printf("action client : %s\n", action);
+        /* Attente du choix du client */
+        char action[BUFSIZ]; memset(action, 0, BUFSIZ);
+        error = recv(client_fd, action, sizeof(action), 0); perror("recv action ");
+            if (error == -1) { close(client_fd); return EXIT_FAILURE; }
+        printf("action client : %s\n", action);
 
-    /* Si le choix est list, on envoie la liste de fichiers au client */
-    if (strcasecmp(action, "list") == 0) {
-        list(client_fd, server_fd);   
-    /* Si le choix est download, on reçoit le nom du fichier et on envoie le fichier au client */    
-    } else if (strcasecmp(action, "download") == 0) {
-        upload(filename, client_fd, server_fd);
-    /* Si le choix est upload, on reçoit le nom du fichier et on télécharge le fichier aupres du client */  
-    } else if (strcasecmp(action, "upload") == 0) {
-        download(filename, client_fd);
-    } 
+        /* Si le choix est list, on envoie la liste de fichiers au client */
+        if (strcasecmp(action, "list") == 0) {
+            list(client_fd, server_fd);   
+        /* Si le choix est download, on reçoit le nom du fichier et on envoie le fichier au client */    
+        } else if (strcasecmp(action, "download") == 0) {
+            upload(filename, client_fd, server_fd);
+        /* Si le choix est upload, on reçoit le nom du fichier et on télécharge le fichier aupres du client */  
+        } else if (strcasecmp(action, "upload") == 0) {
+            download(filename, client_fd);
+        } 
     }  
+
     return 0;
     
 }
