@@ -40,7 +40,7 @@ void download (char filename[], int client_fd) {
             char *recvfile = malloc(sizeFile);
             long long int totalrecv = 0;
             // On reçoit le fichier tant que les octets reçus est superieur a 0
-            while ((error = recv(client_fd, recvfile, sizeFile, 0)) > 1) {
+            while ((error = recv(client_fd, recvfile, sizeFile, 0)) > 0) {
                 totalrecv += error;
                 printf("octets reçus = %lld sur %lld\n", totalrecv, sizeFile);
                 // On ecrit le fichier par octets reçus
@@ -60,9 +60,9 @@ void download (char filename[], int client_fd) {
 }
 
 void upload (char filename[], int client_fd) {
-    int filename_len = strlen(filename) + 1;  // Inclut le '\0', evite le bug d'une reception avec des caracteres en trop
+    // int filename_len = strlen(filename) + 1;  // Inclut le '\0', evite le bug d'une reception avec des caracteres en trop
     // On envoie le nom du fichier
-    int error = send(client_fd, filename, filename_len, 0); perror("send filename ");
+    int error = send(client_fd, filename, BUFSIZ, 0); perror("send filename ");
         if (error == -1) { close(client_fd); return; }
 
     // On crée son chemin et on le met dans path 

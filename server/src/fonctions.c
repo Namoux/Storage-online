@@ -114,7 +114,7 @@ void upload (char filename[], int client_fd, int server_fd) {
 
 void download (char filename[], int client_fd) {
     // On reçoit le nom du fichier
-    int error = recv(client_fd, filename, BUFSIZ-1, 0); perror("recv filename ");
+    long long int error = recv(client_fd, filename, BUFSIZ, 0); perror("recv filename ");
             if (error == -1) { close(client_fd); return; }
         printf("Client want to upload %s\n", filename);
 
@@ -123,13 +123,13 @@ void download (char filename[], int client_fd) {
         sprintf(path, "server/public/%s", filename);
 
         // On ouvre le fichier mode ab pr le creer si inexistant
-        FILE *file = fopen(path, "ab");
+        FILE *file = fopen(path, "wb");
 
             if (file) {
                 printf("Il sera téléchargé dans : ..%s\n", path);
 
                 // on reçoit la taille du fichier, la taille peut etre tres grande, on le stocke donc dans long long int qui fait 8 octets
-                long long int sizeFile = 0;
+                unsigned long long int sizeFile = 0;
                 error = recv(client_fd, &sizeFile, sizeof(long long int), 0); perror("recv sizeFile ");
                     if (error == -1) { close(client_fd); return; }
                 printf("Taille du fichier : %lld octets\n", sizeFile);
